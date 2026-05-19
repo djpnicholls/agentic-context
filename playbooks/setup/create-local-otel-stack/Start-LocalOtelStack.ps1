@@ -62,7 +62,7 @@ function Wait-ForHealth {
     $deadline = (Get-Date).AddSeconds($Timeout)
     while ((Get-Date) -lt $deadline) {
         try {
-            $response = Invoke-WebRequest -Uri $Url -TimeoutSec 2 -UseBasicParsing *>$null
+            $response = Invoke-WebRequest -Uri $Url -TimeoutSec 2 -UseBasicParsing -ErrorAction Stop
             if ($response.StatusCode -eq 200) {
                 Write-Host "  $Name is healthy"
                 return $true
@@ -94,11 +94,12 @@ function Start-Stack {
 
     Write-Host "Creating pod '$PodName'..."
     podman pod create --name $PodName `
-        -p 4317:4317 `
-        -p 4318:4318 `
-        -p 8428:8428 `
-        -p 9428:9428 `
-        -p 10428:10428
+        -p 127.0.0.1:4317:4317 `
+        -p 127.0.0.1:4318:4318 `
+        -p 127.0.0.1:8428:8428 `
+        -p 127.0.0.1:9428:9428 `
+        -p 127.0.0.1:10428:10428 `
+        -p 127.0.0.1:13133:13133
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to create pod"

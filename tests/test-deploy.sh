@@ -162,9 +162,17 @@ assert_file_exists "copilot/setup-discover-local-otel-stack" "$TC1_DIR/.github/s
 assert_file_exists "copilot/setup-use-local-otel-stack" "$TC1_DIR/.github/skills/setup-use-local-otel-stack/SKILL.md"
 assert_file_exists "copilot/setup-instrument-dotnet-otel" "$TC1_DIR/.github/skills/setup-instrument-dotnet-otel/SKILL.md"
 
-echo "  --- allowed-tools check ---"
+echo "  --- Wrapper content checks ---"
 assert_contains "claude wrapper allowed-tools" "$TC1_DIR/.claude/skills/setup-create-local-otel-stack/SKILL.md" "allowed-tools:"
 assert_not_contains "claude wrapper no git-only bash" "$TC1_DIR/.claude/skills/setup-create-local-otel-stack/SKILL.md" "Bash(git *)"
+assert_contains "claude wrapper unrestricted bash" "$TC1_DIR/.claude/skills/setup-create-local-otel-stack/SKILL.md" "Bash,"
+assert_contains "claude wrapper has description" "$TC1_DIR/.claude/skills/setup-create-local-otel-stack/SKILL.md" 'description: "Create and start a local OpenTelemetry'
+assert_contains "claude wrapper has playbook path" "$TC1_DIR/.claude/skills/setup-create-local-otel-stack/SKILL.md" ".context/playbooks/setup/create-local-otel-stack.md"
+
+echo "  --- Copilot wrappers omit allowed-tools ---"
+assert_not_contains "copilot wrapper no allowed-tools" "$TC1_DIR/.github/skills/setup-create-local-otel-stack/SKILL.md" "allowed-tools:"
+assert_contains "copilot wrapper has description" "$TC1_DIR/.github/skills/setup-create-local-otel-stack/SKILL.md" 'description: "Create and start a local OpenTelemetry'
+assert_contains "copilot wrapper has playbook path" "$TC1_DIR/.github/skills/setup-create-local-otel-stack/SKILL.md" ".context/playbooks/setup/create-local-otel-stack.md"
 
 echo "  --- Safety and provenance ---"
 assert_contains "local-dev-only warning" "$TC1_DIR/.context/playbooks/setup/create-local-otel-stack.md" "Local development and testing only"

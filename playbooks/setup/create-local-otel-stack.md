@@ -1,11 +1,7 @@
-<!-- Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced. -->
 ---
 name: setup-create-local-otel-stack
-description: >
-  Use to create and start a local OpenTelemetry observability stack
-  (OTel Collector, VictoriaMetrics, VictoriaLogs, VictoriaTraces).
-  Only use this after running discover-local-otel-stack and confirming that no stack is currently running.
-  To send telemetry to a running stack, use use-local-otel-stack instead.
+# Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced.
+description: "Create and start a local OpenTelemetry observability stack (OTel Collector, VictoriaMetrics, VictoriaLogs, VictoriaTraces) for development and testing"
 keywords: [create otel stack, local otel, set up opentelemetry, local telemetry, opentelemetry local]
 ---
 
@@ -91,25 +87,25 @@ docker network create otel-stack
 
 # Start VictoriaMetrics
 docker run -d --network otel-stack --name victoriametrics \
-  -p 8428:8428 \
+  -p 127.0.0.1:8428:8428 \
   victoriametrics/victoria-metrics:v1.130.0 \
   --storageDataPath=/storage
 
 # Start VictoriaLogs
 docker run -d --network otel-stack --name victorialogs \
-  -p 9428:9428 \
+  -p 127.0.0.1:9428:9428 \
   victoriametrics/victoria-logs:v1.47.0 \
   --storageDataPath=/vlogs
 
 # Start VictoriaTraces
 docker run -d --network otel-stack --name victoriatraces \
-  -p 10428:10428 \
+  -p 127.0.0.1:10428:10428 \
   victoriametrics/victoria-traces:v0.7.1 \
   --storageDataPath=/vtraces --servicegraph.enableTask=true
 
 # Start OTel Collector (using compose config)
 docker run -d --network otel-stack --name otel-collector \
-  -p 4317:4317 -p 4318:4318 \
+  -p 127.0.0.1:4317:4317 -p 127.0.0.1:4318:4318 \
   -v ./otel-collector-config-compose.yaml:/etc/otel-collector-config.yml:ro \
   ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.133.0 \
   --config=/etc/otel-collector-config.yml
@@ -122,17 +118,19 @@ Uses service names for inter-container communication (e.g., `victoriametrics:842
 Image versions are read from `versions.env` via variable substitution. Pass `--env-file` so Docker Compose can resolve the `${IMAGE_*}` variables:
 
 ```bash
+COMPOSE=".context/playbooks/setup/create-local-otel-stack"
+
 # Start all services (versions read from versions.env)
-docker-compose --env-file .context/playbooks/setup/create-local-otel-stack/versions.env up -d
+docker-compose -f "$COMPOSE/docker-compose.yaml" --env-file "$COMPOSE/versions.env" up -d
 
 # Stop all services
-docker-compose --env-file .context/playbooks/setup/create-local-otel-stack/versions.env down
+docker-compose -f "$COMPOSE/docker-compose.yaml" --env-file "$COMPOSE/versions.env" down
 
 # View logs
-docker-compose --env-file .context/playbooks/setup/create-local-otel-stack/versions.env logs -f
+docker-compose -f "$COMPOSE/docker-compose.yaml" --env-file "$COMPOSE/versions.env" logs -f
 
 # Restart specific service
-docker-compose --env-file .context/playbooks/setup/create-local-otel-stack/versions.env restart otel-collector
+docker-compose -f "$COMPOSE/docker-compose.yaml" --env-file "$COMPOSE/versions.env" restart otel-collector
 ```
 
 Automatically creates network; uses service names for communication.
@@ -294,7 +292,7 @@ If backends don't become healthy within 30 seconds:
 
 ## Version Updates
 
-`versions.env` is the single source of truth for image versions. The Bash and PowerShell start scripts source it directly. `docker-compose.yaml` references the same variables via `${IMAGE_*}` substitution (pass `--env-file versions.env` when running `docker-compose`).
+`versions.env` is the single source of truth for image versions. The Bash and PowerShell start scripts source it directly. `docker-compose.yaml` references the same variables via `${IMAGE_*}` substitution (pass `-f docker-compose.yaml --env-file versions.env` when running `docker-compose`).
 
 To update component versions:
 

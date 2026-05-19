@@ -1,11 +1,7 @@
-<!-- Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced. -->
 ---
 name: setup-discover-local-otel-stack
-description: >
-  Use to determine whether a local OpenTelemetry stack is already running on this machine.
-  Always run this before using create-local-otel-stack or use-local-otel-stack.
-  Returns whether each component (OTel Collector, VictoriaMetrics, VictoriaLogs, VictoriaTraces)
-  is healthy and what endpoints are available.
+# Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced.
+description: "Determine whether a local OpenTelemetry stack is already running and report component health and endpoints"
 keywords: [discover otel stack, find otel stack, otel stack running]
 ---
 

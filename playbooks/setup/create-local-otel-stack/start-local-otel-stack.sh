@@ -98,11 +98,12 @@ start_stack() {
 
     echo "Creating pod '$POD_NAME'..."
     podman pod create --name "$POD_NAME" \
-        -p 4317:4317 \
-        -p 4318:4318 \
-        -p 8428:8428 \
-        -p 9428:9428 \
-        -p 10428:10428
+        -p 127.0.0.1:4317:4317 \
+        -p 127.0.0.1:4318:4318 \
+        -p 127.0.0.1:8428:8428 \
+        -p 127.0.0.1:9428:9428 \
+        -p 127.0.0.1:10428:10428 \
+        -p 127.0.0.1:13133:13133
 
     echo "Starting VictoriaMetrics..."
     # --opentelemetry.usePrometheusNaming was removed: VictoriaMetrics 1.100+

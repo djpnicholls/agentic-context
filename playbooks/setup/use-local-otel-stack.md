@@ -1,11 +1,7 @@
-<!-- Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced. -->
 ---
 name: setup-use-local-otel-stack
-description: >
-  Use when you need to send OpenTelemetry telemetry to a local stack, or query it
-  for metrics, logs, or traces during development or testing.
-  Run discover-local-otel-stack first to confirm the stack is available.
-  Do not use this skill when you need to access real production telemetry.
+# Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced.
+description: "Send OpenTelemetry telemetry to a local stack or query it for metrics, logs, and traces during development or testing"
 keywords: [use otel stack, connect otel, send telemetry, otlp endpoint]
 ---
 

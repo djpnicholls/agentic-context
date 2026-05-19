@@ -1,12 +1,7 @@
-<!-- Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced. -->
 ---
 name: setup-instrument-dotnet-otel
-description: >
-  Use when instrumenting a .NET application with the OpenTelemetry SDK for traces, metrics, and logs.
-  Covers SDK setup, OTLP export configuration, and three known pitfalls with the .NET OTLP exporter:
-  explicit endpoint breaking signal path appending, gRPC unreachable via host.containers.internal,
-  and ActivityListener test isolation failures. Use use-local-otel-stack to send telemetry to a local
-  stack for testing.
+# Ported from devopsin@9fa20ff0 (feature/split-telemetry-skills) — not automatically synced.
+description: "Instrument a .NET application with the OpenTelemetry SDK for traces, metrics, and logs, including OTLP export configuration and known pitfalls"
 keywords: [instrument dotnet, dotnet otel, opentelemetry dotnet, dotnet sdk otel]
 ---
 
