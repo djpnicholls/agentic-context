@@ -13,6 +13,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Detect whether the source filesystem supports permission differentiation.
+# On WSL2-mounted Windows filesystems, all files are rwxrwxrwx regardless
+# of git index permissions. In that case, skip non-executable assertions
+# because cp preserves the (always-executable) source permissions.
+PERMS_SUPPORTED=true
+if [ -x "$REPO_DIR/README.md" ]; then
+  PERMS_SUPPORTED=false
+fi
+
 PASSED=0
 FAILED=0
 
@@ -69,6 +78,10 @@ assert_executable() {
 assert_not_executable() {
   local label="$1"
   local path="$2"
+  if [ "$PERMS_SUPPORTED" = false ]; then
+    echo "  SKIP: $label non-executable check (filesystem does not differentiate permissions)"
+    return 0
+  fi
   if [ ! -x "$path" ]; then
     pass "$label is not executable (expected)"
   else

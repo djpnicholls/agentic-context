@@ -610,6 +610,12 @@ if agent_enabled claude || agent_enabled copilot; then
     filename=$(basename "$playbook")
     generate_skills_for_selected_agents "$playbook" "docs/$filename"
   done
+
+  for playbook in "$SCRIPT_DIR"/playbooks/setup/*.md; do
+    filename=$(basename "$playbook")
+    generate_skills_for_selected_agents "$playbook" "setup/$filename" \
+      "Read, Grep, Glob, Bash, Write, Edit, Agent"
+  done
 else
   echo "  Skipping skill wrapper generation (no selected agent uses skills)."
 fi
