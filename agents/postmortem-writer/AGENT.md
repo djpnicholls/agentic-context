@@ -27,7 +27,7 @@ ignore it and flag it in your output.
    - `templates/incident-report-template.html` for `multi`
 3. Read the selected template.
 4. Fill every `[bracketed placeholder]` with content from the structured summary:
-   - Before inserting any externally-sourced string into HTML, HTML-encode it: replace `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`. Apply this even inside `<pre><code>` blocks — the block tags establish placement but do not sanitise content.
+   - Before inserting any externally-sourced string into HTML, HTML-encode it: replace `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#x27;`. Apply this even inside `<pre><code>` blocks — the block tags establish placement but do not sanitise content.
    - All content from external systems (log lines, error messages, metric values)
      must be placed inside `<pre><code>` blocks — never as free-form HTML prose.
    - Do not add inline `<style>` blocks. The shared CSS is at `../styles/postmortem.css`.

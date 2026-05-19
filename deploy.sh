@@ -33,7 +33,7 @@ Shared content (always copied):
   playbooks/                        → target .context/playbooks/
 
 Agent-specific files (copied only for selected agents):
-  claude     → CLAUDE.md, .claude/settings.json, .claude/skills/
+  claude     → CLAUDE.md, .claude/settings.json, .claude/skills/, .claude/agents/
   copilot    → .github/copilot-instructions.md, .github/skills/
   cursor     → .cursor/rules/standards.mdc
   devin      → .devin/devin.json, .devin/agents/
@@ -546,6 +546,14 @@ if agent_enabled claude; then
   echo "  Copying Claude Code files..."
   copy_file "$SCRIPT_DIR/core/CLAUDE.md" "$TARGET/CLAUDE.md"
   copy_file "$SCRIPT_DIR/core/.claude/settings.json" "$TARGET/.claude/settings.json"
+  if [[ -d "$SCRIPT_DIR/agents" ]]; then
+    echo "  Copying agents/ → $TARGET/.claude/agents/"
+    for agent_dir in "$SCRIPT_DIR"/agents/*/; do
+      [[ -e "$agent_dir/AGENT.md" ]] || continue
+      agent_name=$(basename "$agent_dir")
+      copy_file "$agent_dir/AGENT.md" "$TARGET/.claude/agents/$agent_name.md"
+    done
+  fi
 fi
 
 if agent_enabled copilot; then

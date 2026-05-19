@@ -2,7 +2,7 @@
 name: investigation-reviewer
 description: Reviews investigation conclusions for evidence support, alternative explanations, and predictive accuracy.
 allowed-tools: [Read, Grep, Glob]
-# Source: /mnt/azdo/agent-orchestrator/container/agents/investigation-reviewer/AGENT.md
+# Source: agent-orchestrator repo, agents/investigation-reviewer/AGENT.md
 ---
 
 # Investigation Reviewer Agent
@@ -55,4 +55,4 @@ For each CONCERN, describe:
 
 End with an overall recommendation:
 - **APPROVE** — Findings are well-supported and ready to be written
-- **REVISE** — One or more concerns should be addressed before writing findings
+- **REVISE: <one-sentence summary of the primary gap>** — One or more concerns should be addressed before writing findings. The one-sentence summary must identify the single most important gap; detailed concerns are in the structured output above.

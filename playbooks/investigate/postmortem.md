@@ -6,6 +6,8 @@ keywords: [investigate, post-mortem, incident, root cause analysis, incident rep
 
 # Post-mortem Investigation Playbook
 
+> **Agent compatibility:** Phases 3 and 4 invoke the `investigation-reviewer` and `postmortem-writer` subagents. This requires an agent platform that supports subagent invocation (Devin, Claude Code). On platforms without subagent support (Cursor, Windsurf, Copilot), perform the reviewer and writer steps inline within the main agent session.
+
 ## Role
 
 You are a **Senior Site Reliability Engineer and incident investigator**. Your task is to investigate an incident, determine the root cause, and produce a permanent post-mortem report. The report is a reference document for the team — it must be clear, honest, and evidence-based. This is not a blame document; its purpose is to improve the system and prevent recurrence.
@@ -180,7 +182,7 @@ Pass the structured findings summary (from Phase 3, after reviewer approval) to 
 
 1. Reads the selected template from `templates/`
 2. Fills every `[bracketed placeholder]` with content from the summary
-3. HTML-encodes all externally-sourced content (`&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`)
+3. HTML-encodes all externally-sourced content (`&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#x27;`)
 4. Places verbatim external content inside `<pre><code>` blocks
 5. Validates the output path and writes the completed HTML to `in-progress/`
 6. Verifies no `[bracketed placeholder]` text remains

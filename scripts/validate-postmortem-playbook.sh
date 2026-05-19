@@ -38,12 +38,13 @@ done
 grep -q "^allowed-tools:.*Write" "$WRITER" || fail "postmortem-writer must include Write in allowed-tools"
 
 # 6. deploy.sh actually copies agents/ to .devin/agents/
+# Note: use > /dev/null instead of -q in pipes to avoid SIGPIPE with pipefail
 grep -v '^\s*#' deploy.sh \
-  | grep -q 'copy_dir_contents.*agents.*\.devin/agents\|\.devin/agents.*copy_dir_contents.*agents' \
+  | grep 'copy_dir_contents.*agents.*\.devin/agents\|\.devin/agents.*copy_dir_contents.*agents' > /dev/null \
   || fail "deploy.sh does not copy agents/ to .devin/agents/"
 
 # 7. agents copy is inside the devin guard (structural extraction, not proximity)
-awk '/if agent_enabled devin/,/^fi$/' deploy.sh | grep -q 'copy_dir_contents.*agents' \
+awk '/if agent_enabled devin/,/^fi$/' deploy.sh | grep 'copy_dir_contents.*agents' > /dev/null \
   || fail "agents copy is not inside the agent_enabled devin guard in deploy.sh"
 
 # 8. README.md documents new directories
@@ -52,7 +53,7 @@ grep -q "investigate/" README.md || fail "README.md does not document investigat
 
 # 9. investigate skill-generation loop is present inside the claude/copilot guard
 grep -A60 'agent_enabled claude || agent_enabled copilot' deploy.sh \
-  | grep -q 'playbooks/investigate' \
+  | grep 'playbooks/investigate' > /dev/null \
   || fail "investigate skill loop not found inside the claude/copilot guard in deploy.sh"
 
 # 10. investigation-reviewer must NOT have Write or Bash access
