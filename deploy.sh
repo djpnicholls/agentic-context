@@ -36,7 +36,7 @@ Agent-specific files (copied only for selected agents):
   claude     → CLAUDE.md, .claude/settings.json, .claude/skills/
   copilot    → .github/copilot-instructions.md, .github/skills/
   cursor     → .cursor/rules/standards.mdc
-  devin      → .devin/devin.json
+  devin      → .devin/devin.json, .devin/agents/
   windsurf   → .windsurfrules
   all        → all of the above
 
@@ -561,6 +561,10 @@ fi
 if agent_enabled devin; then
   echo "  Copying Devin files..."
   copy_file "$SCRIPT_DIR/core/.devin/devin.json" "$TARGET/.devin/devin.json"
+  if [[ -d "$SCRIPT_DIR/agents" ]]; then
+    echo "  Copying agents/ → $TARGET/.devin/agents/"
+    copy_dir_contents "$SCRIPT_DIR/agents" "$TARGET/.devin/agents"
+  fi
 fi
 
 if agent_enabled windsurf; then
@@ -604,6 +608,18 @@ if agent_enabled claude || agent_enabled copilot; then
   for playbook in "$SCRIPT_DIR"/playbooks/refactor/*.md; do
     filename=$(basename "$playbook")
     generate_skills_for_selected_agents "$playbook" "refactor/$filename"
+  done
+
+  for playbook in "$SCRIPT_DIR"/playbooks/investigate/*.md; do
+    [[ -e "$playbook" ]] || continue  # guard against empty glob
+    filename=$(basename "$playbook")
+    # Write/Edit are NOT included — the postmortem-writer subagent handles all file output.
+    # Bash(git *) permits all git subcommands; see Outstanding Question 7 to narrow this if
+    # the framework supports multiple Bash constraints.
+    generate_skills_for_selected_agents \
+      "$playbook" \
+      "investigate/$filename" \
+      "Read, Grep, Glob, Bash(git *), Agent"
   done
 else
   echo "  Skipping skill wrapper generation (no selected agent uses skills)."

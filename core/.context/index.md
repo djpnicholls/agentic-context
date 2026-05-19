@@ -98,6 +98,14 @@ Combine multiple matches when a task spans domains.
 
 ---
 
+## Playbooks — Investigation (incident analysis and post-mortems)
+
+| Keywords | File | Summary |
+|----------|------|---------|
+| investigate, post-mortem, incident, root cause, incident report, outage | `.context/playbooks/investigate/postmortem.md` | Incident investigation → reviewer-validated conclusions → HTML post-mortem in ResDiary-Postmortems |
+
+---
+
 ## Conventions (style and workflow guidance)
 
 | Keywords | File | Summary |
