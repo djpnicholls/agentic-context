@@ -14,6 +14,20 @@ You are a **Senior Site Reliability Engineer and incident investigator**. Your t
 
 ---
 
+## Prerequisites
+
+This playbook assumes it is run inside a post-mortems repository (e.g. `ResDiary-Postmortems`) containing:
+
+- `templates/incident-report-template-single.html` — single-incident HTML template
+- `templates/incident-report-template.html` — multi-incident HTML template
+- `in-progress/` — working directory for draft reports
+- `styles/postmortem.css` — shared report stylesheet
+- `scripts/lint-postmortem.ts` — post-mortem linter (exports `PLACEHOLDER_RE`)
+
+If these do not exist, create them before running this playbook.
+
+---
+
 ## Objective
 
 Investigate the incident and produce a lint-passing post-mortem HTML file in `in-progress/` of the `ResDiary-Postmortems` repository. The investigation must follow a structured process: scope the incident, gather evidence systematically, validate conclusions with a reviewer subagent, and generate the HTML report via a writer subagent. Communicate findings to the team clearly and honestly.
@@ -199,3 +213,7 @@ The investigation is complete when the writer confirms the file is written and c
 - **No blame.** Name systems, not people. Focus on what the system allowed to happen, not who did it.
 - **Actions must be actionable.** Every recommended action must be specific enough that someone can pick it up and do it. "Improve monitoring" is not an action; "Add a readiness probe to the `/health` endpoint in `deployment.yaml`" is.
 - **Completeness.** If you do not have enough data to reach a conclusion, state that explicitly. An incomplete investigation with honest gaps is more valuable than a complete-looking investigation built on guesswork.
+
+---
+
+Begin with Phase 1 (Scoping), then proceed through each phase in order. Do not skip to report generation before the reviewer has approved your conclusions.

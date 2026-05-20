@@ -56,9 +56,21 @@ grep -A60 'agent_enabled claude || agent_enabled copilot' deploy.sh \
   | grep 'playbooks/investigate' > /dev/null \
   || fail "investigate skill loop not found inside the claude/copilot guard in deploy.sh"
 
-# 10. investigation-reviewer must NOT have Write or Bash access
-if grep -q "^allowed-tools:.*\(Write\|Bash\)" "$REVIEWER"; then
-  fail "investigation-reviewer must not have Write or Bash in allowed-tools"
+# 10. investigation-reviewer must NOT have Write, Edit, or Bash access
+if grep -q "^allowed-tools:.*\(Write\|Bash\|Edit\)" "$REVIEWER"; then
+  fail "investigation-reviewer must not have Write, Edit, or Bash in allowed-tools"
 fi
+
+# 11. Claude agent deployment copies agents to .claude/agents/
+awk '/if agent_enabled claude/,/^fi$/' deploy.sh | grep '\.claude/agents/' > /dev/null \
+  || fail "agents copy to .claude/agents/ not found inside the agent_enabled claude guard"
+
+# 12. Playbook references agents that actually exist and have matching names
+for agent_name in investigation-reviewer postmortem-writer; do
+  grep -q "$agent_name" "$PLAYBOOK" \
+    || fail "Playbook does not reference expected agent: $agent_name"
+  grep -q "^name: $agent_name" "agents/$agent_name/AGENT.md" \
+    || fail "Agent $agent_name has wrong or missing name in frontmatter"
+done
 
 echo "All structural checks passed."

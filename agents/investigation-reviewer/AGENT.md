@@ -2,8 +2,9 @@
 name: investigation-reviewer
 description: Reviews investigation conclusions for evidence support, alternative explanations, and predictive accuracy.
 allowed-tools: [Read, Grep, Glob]
-# Source: agent-orchestrator repo, agents/investigation-reviewer/AGENT.md
 ---
+
+<!-- Source: agent-orchestrator repo, agents/investigation-reviewer/AGENT.md -->
 
 # Investigation Reviewer Agent
 

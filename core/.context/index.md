@@ -102,7 +102,7 @@ Combine multiple matches when a task spans domains.
 
 | Keywords | File | Summary |
 |----------|------|---------|
-| investigate, post-mortem, incident, root cause, incident report, outage | `.context/playbooks/investigate/postmortem.md` | Incident investigation → reviewer-validated conclusions → HTML post-mortem in ResDiary-Postmortems |
+| investigate, post-mortem, incident, root cause analysis, incident report, outage | `.context/playbooks/investigate/postmortem.md` | Incident investigation → reviewer-validated conclusions → HTML post-mortem in ResDiary-Postmortems |
 
 ---
 

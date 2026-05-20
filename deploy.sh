@@ -598,22 +598,26 @@ if agent_enabled claude || agent_enabled copilot; then
   fi
 
   for playbook in "$SCRIPT_DIR"/playbooks/assess/*.md; do
+    [[ -e "$playbook" ]] || continue
     filename=$(basename "$playbook")
     generate_skills_for_selected_agents "$playbook" "assess/$filename"
   done
 
   for playbook in "$SCRIPT_DIR"/playbooks/review/*.md; do
+    [[ -e "$playbook" ]] || continue
     filename=$(basename "$playbook")
     # Review playbooks get read-only tools for Claude Code
     generate_skills_for_selected_agents "$playbook" "review/$filename" "Read, Grep, Glob, Bash(git *)"
   done
 
   for playbook in "$SCRIPT_DIR"/playbooks/plan/*.md; do
+    [[ -e "$playbook" ]] || continue
     filename=$(basename "$playbook")
     generate_skills_for_selected_agents "$playbook" "plan/$filename"
   done
 
   for playbook in "$SCRIPT_DIR"/playbooks/refactor/*.md; do
+    [[ -e "$playbook" ]] || continue
     filename=$(basename "$playbook")
     generate_skills_for_selected_agents "$playbook" "refactor/$filename"
   done
@@ -622,8 +626,8 @@ if agent_enabled claude || agent_enabled copilot; then
     [[ -e "$playbook" ]] || continue  # guard against empty glob
     filename=$(basename "$playbook")
     # Write/Edit are NOT included — the postmortem-writer subagent handles all file output.
-    # Bash(git *) permits all git subcommands; see Outstanding Question 7 to narrow this if
-    # the framework supports multiple Bash constraints.
+    # Bash(git *) permits all git subcommands. If finer-grained constraints are needed
+    # (e.g., read-only git only), update the allowed-tools list here.
     generate_skills_for_selected_agents \
       "$playbook" \
       "investigate/$filename" \
