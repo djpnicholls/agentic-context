@@ -288,8 +288,8 @@ Every Azure DevOps YAML pipeline must be explicit, secure, and reproducible. Tri
 
 ### 13.1 · Semantic Versioning Format
 
-- All pipeline version fields (`version:` or `buildVersion:`) must follow `MAJOR.MINOR.PATCH` format.
-- Every code change must increment the version — never leave it unchanged after a change.
+- Any pipeline version value, such as a `version`/`buildVersion` entry under `variables:` or a version encoded in the pipeline `name:` / `Build.BuildNumber`, must follow `MAJOR.MINOR.PATCH` format.
+- Every code change must increment that configured version value or build number — never leave it unchanged after a change.
 - Versions must always increment, never reset or decrease.
 - Versions must stay in sync across all pipeline YAML files in the repository.
 - If multiple YAML files reference a shared variable file (e.g. `variables.yml`), update the version there instead of in individual files.
