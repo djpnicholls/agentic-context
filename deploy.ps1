@@ -152,6 +152,8 @@ function Confirm-Overwrite {
     }
 }
 
+$script:TextExtensions = @('.md', '.json', '.mdc', '.txt', '.yaml', '.yml', '.toml', '.ini')
+
 function Copy-SingleFile {
     param([string]$Source, [string]$Destination)
     if (-not (Confirm-Overwrite -Destination $Destination)) {
@@ -161,7 +163,13 @@ function Copy-SingleFile {
     if (-not (Test-Path $parentDir)) {
         New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
     }
-    Copy-Item -Path $Source -Destination $Destination -Force
+    $ext = [System.IO.Path]::GetExtension($Source).ToLower()
+    if ($ext -in $script:TextExtensions) {
+        $content = [System.IO.File]::ReadAllText($Source) -replace "`r`n", "`n" -replace "`r", "`n"
+        [System.IO.File]::WriteAllText($Destination, $content, (New-Object System.Text.UTF8Encoding($false)))
+    } else {
+        Copy-Item -Path $Source -Destination $Destination -Force
+    }
 }
 
 function Copy-DirectoryContents {
@@ -417,8 +425,8 @@ function New-SkillWrapper {
     }
     $lines += @("---", "", "Read and follow ${bt}.context/playbooks/${RelPath}${bt} in full.")
 
-    $content = ($lines -join [Environment]::NewLine) + [Environment]::NewLine
-    [System.IO.File]::WriteAllText($skillFile, $content)
+    $content = ($lines -join "`n") + "`n"
+    [System.IO.File]::WriteAllText($skillFile, $content, (New-Object System.Text.UTF8Encoding($false)))
 }
 
 function New-SkillsForSelectedAgents {
