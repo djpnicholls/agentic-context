@@ -39,7 +39,7 @@ Before assessing anything, build regulatory context. Investigate and document:
 - **Lawful basis register** -- for each processing activity, what is the lawful basis? Consent, contract, legitimate interest, legal obligation?
 - **Third-party processors** -- which external services receive personal data? Do they have DPAs and appropriate certifications?
 - **Consent mechanisms** -- how is consent collected, recorded, and withdrawn? Is it granular and freely given?
-- **Cookies and tracking technologies** -- what cookies, third-party scripts, pixels, and LocalStorage/sessionStorage keys does the product set? Is there a complete declaration, and is it maintained as a machine-readable config? Are non-essential technologies gated behind consent?
+- **Cookies and tracking technologies** -- what cookies, third-party scripts, pixels, and localStorage/sessionStorage keys does the product set? Is there a complete declaration, and is it maintained as a machine-readable config? Are non-essential technologies gated behind consent?
 - **Data subject rights** -- can the application fulfil access, deletion, portability, and rectification requests?
 - **Retention policies** -- how long is data kept? Is there automated deletion? Are retention periods documented and justified?
 - **Cross-border transfers** -- does personal data leave the EEA/UK? What safeguards are in place?
@@ -99,7 +99,7 @@ Evaluate the application against the GDPR requirements defined in `standards/gdp
 
 | Aspect | What to evaluate |
 |---|---|
-| Declaration completeness | Enumerate every cookie, third-party script, pixel, and LocalStorage/sessionStorage key the product sets. Verify each is declared per `standards/gdpr.md` §12. Flag any undeclared storage as a finding. |
+| Declaration completeness | Enumerate every cookie, third-party script, pixel, and localStorage/sessionStorage key the product sets. Verify each is declared per `standards/gdpr.md` §12. Flag any undeclared storage as a finding. |
 | Categorisation | Verify each entry is classified (strictly necessary, functional, analytics, advertising) and that only strictly necessary entries are set without consent, per `standards/gdpr.md` §12. |
 | Consent gating | Verify non-essential cookies, scripts, and storage are not set before consent for the matching category, and that the banner offers granular choice with no pre-ticked boxes, per `standards/gdpr.md` §12. |
 | Machine-readable config | Verify a versioned JSON declaration exists, drives the banner and public policy, and is reconciled against runtime behaviour in CI, per `standards/gdpr.md` §12. |

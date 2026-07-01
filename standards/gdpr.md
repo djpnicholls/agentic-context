@@ -332,7 +332,7 @@ compliance failure. The declaration must cover:
   beacon, advertising script, embedded widget, or SDK that sets storage or
   transmits data to a third party. Name the recipient and link to their
   privacy policy.
-- **LocalStorage / sessionStorage** — declare **every** key the product sets,
+- **localStorage / sessionStorage** — declare **every** key the product sets,
   with its purpose, category, and whether it holds personal data; keys that
   store personal data or are used for tracking are the most important to
   capture but are not the only ones that must be declared. Consent is required
@@ -351,8 +351,9 @@ compliance failure. The declaration must cover:
 
 Classify every entry into one of the following. Only **strictly necessary**
 entries may be set without prior consent. The **Category ID** is the canonical
-enum value used in the `category` field of the JSON config below — the SDK, CI
-checks, and consent banner all key off these identifiers, so use them verbatim.
+enum value used in the `category` field of the JSON config below — your consent
+logic, CI checks, and consent banner all key off these identifiers, so use them
+verbatim.
 
 | Category | Category ID (JSON) | Consent required | Examples |
 |---|---|---|---|
@@ -383,11 +384,10 @@ checks, and consent banner all key off these identifiers, so use them verbatim.
 The declaration must be maintained as a single source-of-truth JSON config that
 drives the consent banner, the public policy, and automated compliance checks.
 Its scope is **all** tracking technologies — cookies, other client-side storage
-(LocalStorage/sessionStorage, IndexedDB, Cache Storage), and third-party tags —
+(localStorage/sessionStorage, IndexedDB, Cache Storage), and third-party tags —
 not cookies alone. A hand-maintained prose policy drifts from reality and must
-not be the only declaration. The SDK supports granular declaration through this
-config. Each entry uses the following fields, with the allowed values fixed so
-declarations stay consistent across teams and tools:
+not be the only declaration. Each entry uses the following fields, with the
+allowed values fixed so declarations stay consistent across teams and tools:
 
 | Field | Allowed values |
 |---|---|
@@ -488,7 +488,7 @@ Before merging any change that touches personal data:
 - [ ] **Test data** — tests use synthetic data, not production personal data
 - [ ] **Third parties** — any new data sharing has a DPA in place and a
       documented transfer mechanism if cross-border
-- [ ] **Cookies** — every cookie, third-party script, and LocalStorage/
+- [ ] **Cookies** — every cookie, third-party script, and localStorage/
       sessionStorage key the change introduces is added to the JSON tracking
       declaration with category, purpose, provider, and expiry
 - [ ] **Consent gating** — non-essential cookies, scripts, and storage are
