@@ -314,6 +314,144 @@ triggers:
 
 ---
 
+## 12 · Cookies & Tracking Technologies
+
+Cookies and equivalent client-side storage are regulated under the ePrivacy
+Directive — and national implementations such as the UK PECR — in addition to
+GDPR. Consent for non-essential storage is required **before** the technology
+is set, and the GDPR consent standards in §4 apply in full.
+
+### Declaration Requirements
+
+Every cookie, script, and client-side storage mechanism the product sets must
+be declared. A declaration that omits anything the product actually sets is a
+compliance failure. The declaration must cover:
+
+- **First-party cookies** — name, purpose, category, and expiry.
+- **Third-party scripts and cookies** — every external tag, pixel, analytics
+  beacon, advertising script, embedded widget, or SDK that sets storage or
+  transmits data to a third party. Name the recipient and link to their
+  privacy policy.
+- **localStorage / sessionStorage** — declare **every** key the product sets,
+  with its purpose, category, and whether it holds personal data; keys that
+  store personal data or are used for tracking are the most important to
+  capture but are not the only ones that must be declared. Consent is required
+  unless the key is **strictly necessary** for a service the user explicitly
+  requested (per the category table below). The strictly-necessary test — not
+  the mere absence of personal data — determines the exemption; strictly-
+  necessary keys must still be documented.
+- **Other client-side storage** — IndexedDB and Cache Storage are treated
+  identically to cookies.
+- **Device fingerprinting and similar tracking techniques** — fingerprinting
+  is not a storage mechanism, but reading or combining device/browser
+  characteristics to identify or track a user is subject to the same consent
+  gating and declaration requirements as stored identifiers.
+
+### Categories
+
+Classify every entry into one of the following. Only **strictly necessary**
+entries may be set without prior consent. The **Category ID** is the canonical
+enum value used in the `category` field of the JSON config below — your consent
+logic, CI checks, and consent banner all key off these identifiers, so use them
+verbatim.
+
+| Category | Category ID (JSON) | Consent required | Examples |
+|---|---|---|---|
+| Strictly necessary | `strictly-necessary` | No (exempt) | Session authentication, load balancing, CSRF tokens, consent-state storage |
+| Functional / preferences | `functional` | Yes | Language, theme, region, accessibility settings (when not strictly necessary) |
+| Analytics / performance | `analytics` | Yes | Usage analytics, A/B testing, heatmaps, error monitoring with identifiers |
+| Advertising / targeting | `advertising` | Yes | Ad personalisation, retargeting pixels, cross-site tracking |
+
+### Consent Gating
+
+- Non-essential cookies, scripts, and storage must **not** be set until the
+  user has given consent for the matching category. No pre-loading of third-
+  party tags before consent.
+- The consent banner must offer **granular** choice per category, present
+  "reject all" as prominently as "accept all", and use no pre-ticked boxes
+  (per §4).
+- Withdrawal must be as easy as granting it. On withdrawal, clear the first-
+  party storage you control; for third-party cookies, storage, or tags, stop
+  setting and processing them and invoke any vendor-supported opt-out API.
+  Where deletion is not technically possible (for example HttpOnly cookies, or
+  storage on a third-party domain), document the limitation and give the user
+  clear instructions to remove it.
+- The consent state itself is stored in a strictly necessary mechanism and
+  recorded with timestamp, version, and scope (per §4).
+
+### Machine-Readable Declaration (JSON Config)
+
+The declaration must be maintained as a single source-of-truth JSON config that
+drives the consent banner, the public policy, and automated compliance checks.
+Its scope is **all** tracking technologies — cookies, other client-side storage
+(localStorage/sessionStorage, IndexedDB, Cache Storage), and third-party tags —
+not cookies alone. A hand-maintained prose policy drifts from reality and must
+not be the only declaration. The config has a top-level `version` (an
+identifier such as an ISO date, bumped whenever categories or scope change) and
+an `entries` array. Each entry uses the following fields, with the allowed
+values fixed so declarations stay consistent across teams and tools:
+
+| Field | Allowed values |
+|---|---|
+| `name` | The identifier as set (cookie name, storage key, or tag identifier). |
+| `type` | One of `cookie`, `localStorage`, `sessionStorage`, `indexedDB`, `cacheStorage`, `script`, `pixel`, `fingerprint`. |
+| `category` | A Category ID from the table above (`strictly-necessary`, `functional`, `analytics`, `advertising`). |
+| `purpose` | Free-text description of why the entry is set. |
+| `providerType` | Either `first-party` or `third-party`. |
+| `providerName` | The legal entity that controls the entry (omit or set to the organisation's own name for first-party). |
+| `providerPolicy` | URL of the provider's privacy policy. Required when `providerType` is `third-party`. |
+| `personalData` | Boolean — whether the entry holds or derives personal data. |
+| `expiry` | For cookies, either an ISO 8601 duration (e.g. `P2Y`, `P30D`) for a fixed lifetime or the literal `session` for cleared-on-session-end. For `sessionStorage`, use the literal `session` (cleared at tab/session end). For storage with no browser-enforced expiry (localStorage, IndexedDB, Cache Storage), use the literal `persistent`. For `script`, `pixel`, and `fingerprint`, omit `expiry` — not applicable, as these set no storage of their own. |
+
+```json
+{
+  "version": "2026-06-01",
+  "entries": [
+    {
+      "name": "session_id",
+      "type": "cookie",
+      "category": "strictly-necessary",
+      "purpose": "Maintains the authenticated session.",
+      "providerType": "first-party",
+      "providerName": "Example Ltd",
+      "personalData": true,
+      "expiry": "session"
+    },
+    {
+      "name": "_ga",
+      "type": "cookie",
+      "category": "analytics",
+      "purpose": "Distinguishes users for Google Analytics.",
+      "providerType": "third-party",
+      "providerName": "Google LLC",
+      "providerPolicy": "https://policies.google.com/privacy",
+      "personalData": true,
+      "expiry": "P2Y"
+    },
+    {
+      "name": "ui.theme",
+      "type": "localStorage",
+      "category": "functional",
+      "purpose": "Stores the selected colour theme.",
+      "providerType": "first-party",
+      "providerName": "Example Ltd",
+      "personalData": false,
+      "expiry": "persistent"
+    }
+  ]
+}
+```
+
+- The config is versioned. A change to categories or scope invalidates prior
+  consent and triggers re-consent (per §4).
+- CI must verify the declaration against the cookies, storage, and tags
+  actually set at runtime. An undeclared cookie, storage key, or third-party
+  tag detected in CI fails the build.
+- Third-party scripts must be inventoried in the config even when they set
+  storage the application does not control directly.
+
+---
+
 ## Non-Negotiables
 
 | # | Rule |
@@ -325,6 +463,8 @@ triggers:
 | 5 | **No cross-border transfer without a lawful mechanism.** Adequacy decision, SCCs, or BCRs must be in place and documented. |
 | 6 | **No consent dark patterns.** Pre-ticked boxes, confusing language, and bundled consent are forbidden. |
 | 7 | **DSAR capability is not optional.** The system must be able to fulfil any data subject right within 30 days without requiring bespoke engineering effort per request. |
+| 8 | **No undeclared cookies or client-side storage.** Every cookie, third-party script, and storage key the product sets must appear in the JSON tracking declaration. |
+| 9 | **No non-essential storage before consent.** Functional, analytics, and advertising cookies, scripts, and storage must not be set until consent for that category is given. |
 
 ---
 
@@ -350,3 +490,8 @@ Before merging any change that touches personal data:
 - [ ] **Test data** — tests use synthetic data, not production personal data
 - [ ] **Third parties** — any new data sharing has a DPA in place and a
       documented transfer mechanism if cross-border
+- [ ] **Cookies** — every cookie, third-party script, and localStorage/
+      sessionStorage key the change introduces is added to the JSON tracking
+      declaration with category, purpose, provider, and expiry
+- [ ] **Consent gating** — non-essential cookies, scripts, and storage are
+      not set before consent for the matching category is granted
