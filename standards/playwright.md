@@ -280,11 +280,16 @@ await expect(element).toBeVisible();
 - Use the project's data generation utilities (e.g. a `TestDataGenerator` in the `helpers/` directory) to produce realistic test data. Never hardcode names, emails, or phone numbers in tests.
 - Check the configured locale for region-specific formats (phone numbers, postcodes, etc.).
 - Tests that create data (bookings, records, users) must clean up after themselves — typically in an `afterEach` hook — to keep environments clean and tests independent.
-- Read environment variables into module-scoped constants before use. Never pass `process.env.*` inline to constructors: if the variable is `undefined`, cleanup may silently skip, leaving orphan data that causes cascading failures.
+- Read environment variables into module-scoped constants and validate them at load before use. Never pass `process.env.*` inline to constructors: an unset variable is `undefined` at runtime, so cleanup may silently skip, leaving orphan data that causes cascading failures. A non-null assertion (`!`) is compile-time only and does not guard against this — validate explicitly and fail fast.
 
 ```typescript
-// Correct — module scope
-const testConfig = process.env.TEST_TENANT_ID!;
+// Correct — read once at module scope and validate at load.
+// The `!` non-null assertion is compile-time only and provides no runtime
+// guard, so validate explicitly and fail fast if the variable is unset.
+const testTenantId = process.env.TEST_TENANT_ID;
+if (!testTenantId) {
+  throw new Error("TEST_TENANT_ID must be set before running data-creation tests");
+}
 
 test.describe("Data Creation Tests", () => {
   let record: TestRecord;
@@ -296,12 +301,13 @@ test.describe("Data Creation Tests", () => {
   });
 
   test("create record", async () => {
-    record = new TestRecord(testConfig);
+    record = new TestRecord(testTenantId);
     // ...
   });
 });
 
-// Wrong — inline, risks undefined
+// Wrong — inline read with no validation; if undefined, cleanup may silently
+// skip and leave orphan data.
 new TestRecord(process.env.TEST_TENANT_ID);
 ```
 
