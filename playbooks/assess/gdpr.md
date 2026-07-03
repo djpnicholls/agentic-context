@@ -91,9 +91,9 @@ Evaluate the application against the GDPR requirements defined in `standards/gdp
 
 | Aspect | What to evaluate |
 |---|---|
-| Transfer mechanisms | Verify appropriate safeguards per `standards/gdpr.md` §6: adequacy decision, SCCs, BCRs, or derogation. |
-| Sub-processor management | Verify sub-processor list, DPAs, and change notification processes per `standards/gdpr.md` §6. |
-| Transfer impact assessment | Verify risk assessment for transfers to countries without adequacy decisions per `standards/gdpr.md` §6. |
+| Transfer mechanisms | Verify appropriate safeguards per `standards/gdpr.md` §9: adequacy decision, SCCs, BCRs, or derogation. |
+| Sub-processor management | Verify sub-processor list, DPAs, and change notification processes per `standards/gdpr.md` §9. |
+| Transfer impact assessment | Verify risk assessment for transfers to countries without adequacy decisions per `standards/gdpr.md` §9. |
 
 ### 2.5 Cookies & Tracking Technologies (ePrivacy / PECR)
 

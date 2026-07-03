@@ -399,7 +399,7 @@ allowed values fixed so declarations stay consistent across teams and tools:
 | `providerName` | The legal entity that controls the entry (omit or set to the organisation's own name for first-party). |
 | `providerPolicy` | URL of the provider's privacy policy. Required when `providerType` is `third-party`. |
 | `personalData` | Boolean — whether the entry holds or derives personal data. |
-| `expiry` | For cookies, either an ISO 8601 duration (e.g. `P2Y`, `P30D`) for a fixed lifetime or the literal `session` for cleared-on-session-end. For storage with no browser-enforced expiry (localStorage, IndexedDB, Cache Storage), use the literal `persistent`. |
+| `expiry` | For cookies, either an ISO 8601 duration (e.g. `P2Y`, `P30D`) for a fixed lifetime or the literal `session` for cleared-on-session-end. For `sessionStorage`, use the literal `session` (cleared at tab/session end). For storage with no browser-enforced expiry (localStorage, IndexedDB, Cache Storage), use the literal `persistent`. |
 
 ```json
 {
