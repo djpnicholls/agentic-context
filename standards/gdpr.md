@@ -386,8 +386,10 @@ drives the consent banner, the public policy, and automated compliance checks.
 Its scope is **all** tracking technologies — cookies, other client-side storage
 (localStorage/sessionStorage, IndexedDB, Cache Storage), and third-party tags —
 not cookies alone. A hand-maintained prose policy drifts from reality and must
-not be the only declaration. Each entry uses the following fields, with the
-allowed values fixed so declarations stay consistent across teams and tools:
+not be the only declaration. The config has a top-level `version` (an
+identifier such as an ISO date, bumped whenever categories or scope change) and
+an `entries` array. Each entry uses the following fields, with the allowed
+values fixed so declarations stay consistent across teams and tools:
 
 | Field | Allowed values |
 |---|---|
@@ -399,7 +401,7 @@ allowed values fixed so declarations stay consistent across teams and tools:
 | `providerName` | The legal entity that controls the entry (omit or set to the organisation's own name for first-party). |
 | `providerPolicy` | URL of the provider's privacy policy. Required when `providerType` is `third-party`. |
 | `personalData` | Boolean — whether the entry holds or derives personal data. |
-| `expiry` | For cookies, either an ISO 8601 duration (e.g. `P2Y`, `P30D`) for a fixed lifetime or the literal `session` for cleared-on-session-end. For `sessionStorage`, use the literal `session` (cleared at tab/session end). For storage with no browser-enforced expiry (localStorage, IndexedDB, Cache Storage), use the literal `persistent`. |
+| `expiry` | For cookies, either an ISO 8601 duration (e.g. `P2Y`, `P30D`) for a fixed lifetime or the literal `session` for cleared-on-session-end. For `sessionStorage`, use the literal `session` (cleared at tab/session end). For storage with no browser-enforced expiry (localStorage, IndexedDB, Cache Storage), use the literal `persistent`. For `script`, `pixel`, and `fingerprint`, omit `expiry` — not applicable, as these set no storage of their own. |
 
 ```json
 {
